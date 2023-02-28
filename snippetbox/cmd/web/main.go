@@ -8,6 +8,7 @@ import (
 	"os"
 	"text/template"
 
+	"github.com/go-playground/form/v4"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/kafkaphoenix/snippetbox/internal/models"
 )
@@ -23,6 +24,7 @@ type application struct {
 	infoLog       *log.Logger
 	snippets      *models.SnippetModel
 	templateCache map[string]*template.Template
+	formDecoder   *form.Decoder
 }
 
 func main() {
@@ -49,11 +51,15 @@ func main() {
 	}
 	infoLog.Print("Initializing template cache...")
 
+	formDecoder := form.NewDecoder()
+	infoLog.Print("Initializing decoder...")
+
 	app := &application{
 		errorLog:      errorLog,
 		infoLog:       infoLog,
 		snippets:      &models.SnippetModel{DB: db},
 		templateCache: templateCache,
+		formDecoder:   formDecoder,
 	}
 
 	defer db.Close()
