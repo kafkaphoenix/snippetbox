@@ -21,9 +21,11 @@ type config struct {
 	addr      string
 	staticDir string
 	dsn       string
+	debug     bool
 }
 
 type application struct {
+	debug          bool
 	errorLog       *log.Logger
 	infoLog        *log.Logger
 	snippets       models.SnippetModelInterface
@@ -39,6 +41,7 @@ func main() {
 	//addr := os.Getenv("SNIPPETBOX_ADDR")
 	flag.StringVar(&cfg.staticDir, "static-dir", "./ui/static", "Path to static assets")
 	flag.StringVar(&cfg.dsn, "dsn", "mysql:mysql@/snippetbox?parseTime=true", "MySQL data source name")
+	flag.BoolVar(&cfg.debug, "debug", false, "Enable debug mode")
 	flag.Parse()
 
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
@@ -67,6 +70,7 @@ func main() {
 	infoLog.Print("Initializing session manager...")
 
 	app := &application{
+		debug:          cfg.debug,
 		errorLog:       errorLog,
 		infoLog:        infoLog,
 		snippets:       &models.SnippetModel{DB: db},
